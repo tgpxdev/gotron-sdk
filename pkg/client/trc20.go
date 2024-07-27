@@ -7,10 +7,10 @@ import (
 	"math/big"
 	"unicode/utf8"
 
-	"github.com/fbsobreira/gotron-sdk/pkg/address"
-	"github.com/fbsobreira/gotron-sdk/pkg/common"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/api"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
+	"github.com/tgpxdev/gotron-sdk/pkg/address"
+	"github.com/tgpxdev/gotron-sdk/pkg/common"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/api"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core/contract"
 )
 
 const (
@@ -41,7 +41,7 @@ func (g *GrpcClient) TRC20Call(from, contractAddress, data string, constant bool
 	if err != nil {
 		return nil, err
 	}
-	ct := &core.TriggerSmartContract{
+	ct := &contract.TriggerSmartContract{
 		OwnerAddress:    fromDesc.Bytes(),
 		ContractAddress: contractDesc.Bytes(),
 		Data:            dataBytes,

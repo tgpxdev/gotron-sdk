@@ -9,13 +9,13 @@ import (
 	"time"
 
 	"github.com/araddon/dateparse"
-	"github.com/fbsobreira/gotron-sdk/pkg/address"
-	"github.com/fbsobreira/gotron-sdk/pkg/client/transaction"
-	"github.com/fbsobreira/gotron-sdk/pkg/common"
-	"github.com/fbsobreira/gotron-sdk/pkg/keystore"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
-	"github.com/fbsobreira/gotron-sdk/pkg/store"
 	"github.com/spf13/cobra"
+	"github.com/tgpxdev/gotron-sdk/pkg/address"
+	"github.com/tgpxdev/gotron-sdk/pkg/client/transaction"
+	"github.com/tgpxdev/gotron-sdk/pkg/common"
+	"github.com/tgpxdev/gotron-sdk/pkg/keystore"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core/contract"
+	"github.com/tgpxdev/gotron-sdk/pkg/store"
 )
 
 var (
@@ -385,7 +385,7 @@ func trc10Sub() []*cobra.Command {
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 
-			var asset *core.AssetIssueContract
+			var asset *contract.AssetIssueContract
 			var err error
 			found := false
 			if _, err := strconv.Atoi(args[0]); err == nil {

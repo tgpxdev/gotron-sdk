@@ -4,8 +4,8 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/fbsobreira/gotron-sdk/pkg/keys"
 	"github.com/stretchr/testify/assert"
+	"github.com/tgpxdev/gotron-sdk/pkg/keys"
 )
 
 func Test_mnemonic_to_pk(t *testing.T) {

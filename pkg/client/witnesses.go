@@ -3,9 +3,9 @@ package client
 import (
 	"fmt"
 
-	"github.com/fbsobreira/gotron-sdk/pkg/common"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/api"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
+	"github.com/tgpxdev/gotron-sdk/pkg/common"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/api"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core/contract"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -21,7 +21,7 @@ func (g *GrpcClient) ListWitnesses() (*api.WitnessList, error) {
 func (g *GrpcClient) CreateWitness(from, urlStr string) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.WitnessCreateContract{
+	contract := &contract.WitnessCreateContract{
 		Url: []byte(urlStr),
 	}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
@@ -48,7 +48,7 @@ func (g *GrpcClient) CreateWitness(from, urlStr string) (*api.TransactionExtenti
 func (g *GrpcClient) UpdateWitness(from, urlStr string) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.WitnessUpdateContract{}
+	contract := &contract.WitnessUpdateContract{}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
 		return nil, err
 	}
@@ -75,18 +75,18 @@ func (g *GrpcClient) VoteWitnessAccount(from string,
 	witnessMap map[string]int64) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.VoteWitnessContract{}
-	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
+	vwc := &contract.VoteWitnessContract{}
+	if vwc.OwnerAddress, err = common.DecodeCheck(from); err != nil {
 		return nil, err
 	}
 
 	for key, value := range witnessMap {
 		if witnessAddress, err := common.DecodeCheck(key); err == nil {
-			vote := &core.VoteWitnessContract_Vote{
+			vote := &contract.VoteWitnessContract_Vote{
 				VoteAddress: witnessAddress,
 				VoteCount:   value,
 			}
-			contract.Votes = append(contract.Votes, vote)
+			vwc.Votes = append(vwc.Votes, vote)
 
 		} else {
 			return nil, err
@@ -96,7 +96,7 @@ func (g *GrpcClient) VoteWitnessAccount(from string,
 	ctx, cancel := g.getContext()
 	defer cancel()
 
-	tx, err := g.Client.VoteWitnessAccount2(ctx, contract)
+	tx, err := g.Client.VoteWitnessAccount2(ctx, vwc)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +130,7 @@ func (g *GrpcClient) GetWitnessBrokerage(witness string) (float64, error) {
 func (g *GrpcClient) UpdateBrokerage(from string, comission int32) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.UpdateBrokerageContract{
+	contract := &contract.UpdateBrokerageContract{
 		Brokerage: comission,
 	}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {

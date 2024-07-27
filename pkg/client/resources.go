@@ -1,9 +1,10 @@
 package client
 
 import (
-	"github.com/fbsobreira/gotron-sdk/pkg/common"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/api"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
+	"github.com/tgpxdev/gotron-sdk/pkg/common"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/api"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core/contract"
 )
 
 // GetAccountResource from BASE58 address
@@ -119,7 +120,7 @@ func (g *GrpcClient) DelegateResource(from, to string, resource core.ResourceCod
 	ctx, cancel := g.getContext()
 	defer cancel()
 
-	contract := &core.DelegateResourceContract{}
+	contract := &contract.DelegateResourceContract{}
 
 	contract.Resource = resource
 	contract.OwnerAddress = addrFromBytes
@@ -152,7 +153,7 @@ func (g *GrpcClient) UnDelegateResource(owner, receiver string, resource core.Re
 	ctx, cancel := g.getContext()
 	defer cancel()
 
-	contract := &core.UnDelegateResourceContract{}
+	contract := &contract.UnDelegateResourceContract{}
 
 	contract.Resource = resource
 	contract.OwnerAddress = addrOwnerBytes

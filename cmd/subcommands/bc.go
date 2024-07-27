@@ -7,10 +7,11 @@ import (
 	"time"
 
 	"github.com/fatih/structs"
-	"github.com/fbsobreira/gotron-sdk/pkg/address"
-	"github.com/fbsobreira/gotron-sdk/pkg/common"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
 	"github.com/spf13/cobra"
+	"github.com/tgpxdev/gotron-sdk/pkg/address"
+	"github.com/tgpxdev/gotron-sdk/pkg/common"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core/contract"
 	"google.golang.org/protobuf/reflect/protoreflect"
 )
 
@@ -77,7 +78,7 @@ func bcSub() []*cobra.Command {
 			if len(contracts) != 1 {
 				return fmt.Errorf("invalid contracts")
 			}
-			contract := contracts[0]
+			ctt := contracts[0]
 
 			info, err := conn.GetTransactionInfoByID(args[0])
 			if err != nil {
@@ -106,93 +107,93 @@ func bcSub() []*cobra.Command {
 				"netUsage":          info.GetReceipt().GetNetUsage(),
 			}
 
-			result["contractName"] = contract.Type.String()
+			result["contractName"] = ctt.Type.String()
 			//parse contract
 			var c interface{}
-			switch contract.Type {
+			switch ctt.Type {
 			case core.Transaction_Contract_AccountCreateContract:
-				c = &core.AccountCreateContract{}
+				c = &contract.AccountCreateContract{}
 			case core.Transaction_Contract_TransferContract:
-				c = &core.TransferContract{}
+				c = &contract.TransferContract{}
 			case core.Transaction_Contract_TransferAssetContract:
-				c = &core.TransferAssetContract{}
+				c = &contract.TransferAssetContract{}
 			case core.Transaction_Contract_VoteWitnessContract:
-				c = &core.VoteWitnessContract{}
+				c = &contract.VoteWitnessContract{}
 			case core.Transaction_Contract_WitnessCreateContract:
-				c = &core.WitnessCreateContract{}
+				c = &contract.WitnessCreateContract{}
 			case core.Transaction_Contract_WitnessUpdateContract:
-				c = &core.WitnessUpdateContract{}
+				c = &contract.WitnessUpdateContract{}
 			case core.Transaction_Contract_AssetIssueContract:
-				c = &core.AssetIssueContract{}
+				c = &contract.AssetIssueContract{}
 			case core.Transaction_Contract_ParticipateAssetIssueContract:
-				c = &core.ParticipateAssetIssueContract{}
+				c = &contract.ParticipateAssetIssueContract{}
 			case core.Transaction_Contract_AccountUpdateContract:
-				c = &core.AccountUpdateContract{}
+				c = &contract.AccountUpdateContract{}
 			case core.Transaction_Contract_FreezeBalanceContract:
-				c = &core.FreezeBalanceContract{}
+				c = &contract.FreezeBalanceContract{}
 			case core.Transaction_Contract_UnfreezeBalanceContract:
-				c = &core.UnfreezeBalanceContract{}
+				c = &contract.UnfreezeBalanceContract{}
 			case core.Transaction_Contract_WithdrawBalanceContract:
-				c = &core.WithdrawBalanceContract{}
+				c = &contract.WithdrawBalanceContract{}
 			case core.Transaction_Contract_UnfreezeAssetContract:
-				c = &core.UnfreezeAssetContract{}
+				c = &contract.UnfreezeAssetContract{}
 			case core.Transaction_Contract_UpdateAssetContract:
-				c = &core.UpdateAssetContract{}
+				c = &contract.UpdateAssetContract{}
 			case core.Transaction_Contract_ProposalCreateContract:
-				c = &core.ProposalCreateContract{}
+				c = &contract.ProposalCreateContract{}
 			case core.Transaction_Contract_ProposalApproveContract:
-				c = &core.ProposalApproveContract{}
+				c = &contract.ProposalApproveContract{}
 			case core.Transaction_Contract_ProposalDeleteContract:
-				c = &core.ProposalDeleteContract{}
+				c = &contract.ProposalDeleteContract{}
 			case core.Transaction_Contract_SetAccountIdContract:
-				c = &core.SetAccountIdContract{}
+				c = &contract.SetAccountIdContract{}
 			case core.Transaction_Contract_CustomContract:
 				return fmt.Errorf("proto unmarshal any: %s", "customContract")
 			case core.Transaction_Contract_CreateSmartContract:
-				c = &core.CreateSmartContract{}
+				c = &contract.CreateSmartContract{}
 			case core.Transaction_Contract_TriggerSmartContract:
-				c = &core.TriggerSmartContract{}
+				c = &contract.TriggerSmartContract{}
 			case core.Transaction_Contract_GetContract:
 				return fmt.Errorf("proto unmarshal any: %s", "getContract")
 			case core.Transaction_Contract_UpdateSettingContract:
-				c = &core.UpdateSettingContract{}
+				c = &contract.UpdateSettingContract{}
 			case core.Transaction_Contract_ExchangeCreateContract:
-				c = &core.ExchangeCreateContract{}
+				c = &contract.ExchangeCreateContract{}
 			case core.Transaction_Contract_ExchangeInjectContract:
-				c = &core.ExchangeInjectContract{}
+				c = &contract.ExchangeInjectContract{}
 			case core.Transaction_Contract_ExchangeWithdrawContract:
-				c = &core.ExchangeWithdrawContract{}
+				c = &contract.ExchangeWithdrawContract{}
 			case core.Transaction_Contract_ExchangeTransactionContract:
-				c = &core.ExchangeTransactionContract{}
+				c = &contract.ExchangeTransactionContract{}
 			case core.Transaction_Contract_UpdateEnergyLimitContract:
-				c = &core.UpdateEnergyLimitContract{}
+				c = &contract.UpdateEnergyLimitContract{}
 			case core.Transaction_Contract_AccountPermissionUpdateContract:
-				c = &core.AccountPermissionUpdateContract{}
+				c = &contract.AccountPermissionUpdateContract{}
 			case core.Transaction_Contract_ClearABIContract:
-				c = &core.ClearABIContract{}
+				c = &contract.ClearABIContract{}
 			case core.Transaction_Contract_UpdateBrokerageContract:
-				c = &core.UpdateBrokerageContract{}
+				c = &contract.UpdateBrokerageContract{}
 			case core.Transaction_Contract_ShieldedTransferContract:
-				c = &core.ShieldedTransferContract{}
+				c = &contract.ShieldedTransferContract{}
 			case core.Transaction_Contract_MarketSellAssetContract:
-				c = &core.MarketSellAssetContract{}
+				c = &contract.MarketSellAssetContract{}
 			case core.Transaction_Contract_MarketCancelOrderContract:
-				c = &core.MarketCancelOrderContract{}
+				c = &contract.MarketCancelOrderContract{}
 			case core.Transaction_Contract_FreezeBalanceV2Contract:
-				c = &core.FreezeBalanceV2Contract{}
+				c = &contract.FreezeBalanceV2Contract{}
 			case core.Transaction_Contract_UnfreezeBalanceV2Contract:
-				c = &core.UnfreezeBalanceV2Contract{}
+				c = &contract.UnfreezeBalanceV2Contract{}
 			case core.Transaction_Contract_WithdrawExpireUnfreezeContract:
-				c = &core.WithdrawExpireUnfreezeContract{}
+				c = &contract.WithdrawExpireUnfreezeContract{}
 			case core.Transaction_Contract_DelegateResourceContract:
-				c = &core.DelegateResourceContract{}
+				c = &contract.DelegateResourceContract{}
 			case core.Transaction_Contract_UnDelegateResourceContract:
-				c = &core.UnDelegateResourceContract{}
+				c = &contract.UnDelegateResourceContract{}
 			default:
 				return fmt.Errorf("proto unmarshal any: %+w", err)
 			}
 
-			if err = contract.GetParameter().UnmarshalTo(c.(protoreflect.ProtoMessage)); err != nil {
+			if err = ctt.GetParameter().UnmarshalTo(c.(protoreflect.ProtoMessage)); err != nil {
 				return fmt.Errorf("proto unmarshal any: %+w", err)
 			}
 			result["contract"] = parseContractHumanReadable(structs.Map(c))

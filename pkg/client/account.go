@@ -6,11 +6,12 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/fbsobreira/gotron-sdk/pkg/account"
-	"github.com/fbsobreira/gotron-sdk/pkg/address"
-	"github.com/fbsobreira/gotron-sdk/pkg/common"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/api"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
+	"github.com/tgpxdev/gotron-sdk/pkg/account"
+	"github.com/tgpxdev/gotron-sdk/pkg/address"
+	"github.com/tgpxdev/gotron-sdk/pkg/common"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/api"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core/contract"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -74,7 +75,7 @@ func (g *GrpcClient) GetAccountNet(addr string) (*api.AccountNetMessage, error) 
 func (g *GrpcClient) CreateAccount(from, addr string) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.AccountCreateContract{}
+	contract := &contract.AccountCreateContract{}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
 		return nil, err
 	}
@@ -100,7 +101,7 @@ func (g *GrpcClient) CreateAccount(from, addr string) (*api.TransactionExtention
 // UpdateAccount change account name
 func (g *GrpcClient) UpdateAccount(from, accountName string) (*api.TransactionExtention, error) {
 	var err error
-	contract := &core.AccountUpdateContract{}
+	contract := &contract.AccountUpdateContract{}
 	contract.AccountName = []byte(accountName)
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
 		return nil, err
@@ -309,7 +310,7 @@ func (g *GrpcClient) GetAccountDetailed(addr string) (*account.Account, error) {
 // WithdrawBalance rewards from account
 func (g *GrpcClient) WithdrawBalance(from string) (*api.TransactionExtention, error) {
 	var err error
-	contract := &core.WithdrawBalanceContract{}
+	contract := &contract.WithdrawBalanceContract{}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
 		return nil, err
 	}
@@ -410,7 +411,7 @@ func (g *GrpcClient) UpdateAccountPermission(from string, owner, witness map[str
 	if err != nil {
 		return nil, err
 	}
-	contract := &core.AccountPermissionUpdateContract{
+	contract := &contract.AccountPermissionUpdateContract{
 		Owner: ownerPermission,
 	}
 

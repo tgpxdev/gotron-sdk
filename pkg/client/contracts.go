@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/fbsobreira/gotron-sdk/pkg/abi"
-	"github.com/fbsobreira/gotron-sdk/pkg/address"
-	"github.com/fbsobreira/gotron-sdk/pkg/common"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/api"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
+	"github.com/tgpxdev/gotron-sdk/pkg/abi"
+	"github.com/tgpxdev/gotron-sdk/pkg/address"
+	"github.com/tgpxdev/gotron-sdk/pkg/common"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/api"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core/contract"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -25,7 +25,7 @@ func (g *GrpcClient) UpdateEnergyLimitContract(from, contractAddress string, val
 		return nil, err
 	}
 
-	ct := &core.UpdateEnergyLimitContract{
+	ct := &contract.UpdateEnergyLimitContract{
 		OwnerAddress:      fromDesc.Bytes(),
 		ContractAddress:   contractDesc.Bytes(),
 		OriginEnergyLimit: value,
@@ -58,7 +58,7 @@ func (g *GrpcClient) UpdateSettingContract(from, contractAddress string, value i
 		return nil, err
 	}
 
-	ct := &core.UpdateSettingContract{
+	ct := &contract.UpdateSettingContract{
 		OwnerAddress:               fromDesc.Bytes(),
 		ContractAddress:            contractDesc.Bytes(),
 		ConsumeUserResourcePercent: value,
@@ -104,7 +104,7 @@ func (g *GrpcClient) TriggerConstantContract(from, contractAddress, method, json
 		return nil, err
 	}
 
-	ct := &core.TriggerSmartContract{
+	ct := &contract.TriggerSmartContract{
 		OwnerAddress:    fromDesc.Bytes(),
 		ContractAddress: contractDesc.Bytes(),
 		Data:            dataBytes,
@@ -114,7 +114,7 @@ func (g *GrpcClient) TriggerConstantContract(from, contractAddress, method, json
 }
 
 // triggerConstantContract and return tx result
-func (g *GrpcClient) triggerConstantContract(ct *core.TriggerSmartContract) (*api.TransactionExtention, error) {
+func (g *GrpcClient) triggerConstantContract(ct *contract.TriggerSmartContract) (*api.TransactionExtention, error) {
 	ctx, cancel := g.getContext()
 	defer cancel()
 
@@ -144,7 +144,7 @@ func (g *GrpcClient) TriggerContract(from, contractAddress, method, jsonString s
 		return nil, err
 	}
 
-	ct := &core.TriggerSmartContract{
+	ct := &contract.TriggerSmartContract{
 		OwnerAddress:    fromDesc.Bytes(),
 		ContractAddress: contractDesc.Bytes(),
 		Data:            dataBytes,
@@ -164,7 +164,7 @@ func (g *GrpcClient) TriggerContract(from, contractAddress, method, jsonString s
 }
 
 // triggerContract and return tx result
-func (g *GrpcClient) triggerContract(ct *core.TriggerSmartContract, feeLimit int64) (*api.TransactionExtention, error) {
+func (g *GrpcClient) triggerContract(ct *contract.TriggerSmartContract, feeLimit int64) (*api.TransactionExtention, error) {
 	ctx, cancel := g.getContext()
 	defer cancel()
 
@@ -207,7 +207,7 @@ func (g *GrpcClient) EstimateEnergy(from, contractAddress, method, jsonString st
 		return nil, err
 	}
 
-	ct := &core.TriggerSmartContract{
+	ct := &contract.TriggerSmartContract{
 		OwnerAddress:    fromDesc.Bytes(),
 		ContractAddress: contractDesc.Bytes(),
 		Data:            dataBytes,
@@ -227,7 +227,7 @@ func (g *GrpcClient) EstimateEnergy(from, contractAddress, method, jsonString st
 }
 
 // triggerContract and return tx result
-func (g *GrpcClient) estimateEnergy(ct *core.TriggerSmartContract) (*api.EstimateEnergyMessage, error) {
+func (g *GrpcClient) estimateEnergy(ct *contract.TriggerSmartContract) (*api.EstimateEnergyMessage, error) {
 	ctx, cancel := g.getContext()
 	defer cancel()
 
@@ -245,7 +245,7 @@ func (g *GrpcClient) estimateEnergy(ct *core.TriggerSmartContract) (*api.Estimat
 
 // DeployContract and return tx result
 func (g *GrpcClient) DeployContract(from, contractName string,
-	abi *core.SmartContract_ABI, codeStr string,
+	abi *contract.SmartContract_ABI, codeStr string,
 	feeLimit, curPercent, oeLimit int64,
 ) (*api.TransactionExtention, error) {
 
@@ -268,9 +268,9 @@ func (g *GrpcClient) DeployContract(from, contractName string,
 		return nil, err
 	}
 
-	ct := &core.CreateSmartContract{
+	ct := &contract.CreateSmartContract{
 		OwnerAddress: fromDesc.Bytes(),
-		NewContract: &core.SmartContract{
+		NewContract: &contract.SmartContract{
 			OriginAddress:              fromDesc.Bytes(),
 			Abi:                        abi,
 			Name:                       contractName,
@@ -310,7 +310,7 @@ func (g *GrpcClient) UpdateHash(tx *api.TransactionExtention) error {
 }
 
 // GetContractABI return smartContract
-func (g *GrpcClient) GetContractABI(contractAddress string) (*core.SmartContract_ABI, error) {
+func (g *GrpcClient) GetContractABI(contractAddress string) (*contract.SmartContract_ABI, error) {
 	var err error
 	contractDesc, err := address.Base58ToAddress(contractAddress)
 	if err != nil {

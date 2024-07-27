@@ -3,9 +3,9 @@ package client
 import (
 	"fmt"
 
-	"github.com/fbsobreira/gotron-sdk/pkg/common"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/api"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
+	"github.com/tgpxdev/gotron-sdk/pkg/common"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/api"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core/contract"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -21,7 +21,7 @@ func (g *GrpcClient) ProposalsList() (*api.ProposalList, error) {
 func (g *GrpcClient) ProposalCreate(from string, parameters map[int64]int64) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.ProposalCreateContract{
+	contract := &contract.ProposalCreateContract{
 		Parameters: parameters,
 	}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
@@ -48,7 +48,7 @@ func (g *GrpcClient) ProposalCreate(from string, parameters map[int64]int64) (*a
 func (g *GrpcClient) ProposalApprove(from string, id int64, confirm bool) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.ProposalApproveContract{
+	contract := &contract.ProposalApproveContract{
 		ProposalId:    id,
 		IsAddApproval: confirm,
 	}
@@ -75,7 +75,7 @@ func (g *GrpcClient) ProposalApprove(from string, id int64, confirm bool) (*api.
 func (g *GrpcClient) ProposalWithdraw(from string, id int64) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.ProposalDeleteContract{
+	contract := &contract.ProposalDeleteContract{
 		ProposalId: id,
 	}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {

@@ -6,9 +6,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/fbsobreira/gotron-sdk/pkg/common"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/api"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
+	"github.com/tgpxdev/gotron-sdk/pkg/common"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/api"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core/contract"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -29,7 +30,7 @@ func (g *GrpcClient) GetAssetIssueByAccount(address string) (*api.AssetIssueList
 }
 
 // GetAssetIssueByName list asset issued by name
-func (g *GrpcClient) GetAssetIssueByName(name string) (*core.AssetIssueContract, error) {
+func (g *GrpcClient) GetAssetIssueByName(name string) (*contract.AssetIssueContract, error) {
 	ctx, cancel := g.getContext()
 	defer cancel()
 
@@ -37,7 +38,7 @@ func (g *GrpcClient) GetAssetIssueByName(name string) (*core.AssetIssueContract,
 }
 
 // GetAssetIssueByID list asset issued by ID
-func (g *GrpcClient) GetAssetIssueByID(tokenID string) (*core.AssetIssueContract, error) {
+func (g *GrpcClient) GetAssetIssueByID(tokenID string) (*contract.AssetIssueContract, error) {
 	bn := new(big.Int).SetBytes([]byte(tokenID))
 
 	ctx, cancel := g.getContext()
@@ -68,54 +69,54 @@ func (g *GrpcClient) AssetIssue(from, name, description, abbr, urlStr string,
 	trxNum, icoNum, voteScore int32, frozenSupply map[string]string) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.AssetIssueContract{}
-	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
+	assetContract := &contract.AssetIssueContract{}
+	if assetContract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
 		return nil, err
 	}
-	contract.Name = []byte(name)
-	contract.Abbr = []byte(abbr)
+	assetContract.Name = []byte(name)
+	assetContract.Abbr = []byte(abbr)
 	if precision < 0 || precision > 6 {
 		return nil, fmt.Errorf("create asset issue error: precision < 0 || precision > 6")
 	}
-	contract.Precision = precision
+	assetContract.Precision = precision
 	if totalSupply <= 0 {
 		return nil, fmt.Errorf("create asset issue error: total supply <= 0")
 	}
-	contract.TotalSupply = totalSupply
+	assetContract.TotalSupply = totalSupply
 	if trxNum <= 0 {
 		return nil, fmt.Errorf("create asset issue error: trxNum <= 0")
 	}
-	contract.TrxNum = trxNum
+	assetContract.TrxNum = trxNum
 
 	if icoNum <= 0 {
 		return nil, fmt.Errorf("create asset issue error: num <= 0")
 	}
-	contract.Num = icoNum
+	assetContract.Num = icoNum
 
 	now := time.Now().UnixNano() / 1000000
 	if startTime <= now {
 		return nil, fmt.Errorf("create asset issue error: start time <= current time")
 	}
-	contract.StartTime = startTime
+	assetContract.StartTime = startTime
 
 	if endTime <= startTime {
 		return nil, fmt.Errorf("create asset issue error: end time <= start time")
 	}
-	contract.EndTime = endTime
+	assetContract.EndTime = endTime
 
 	if FreeAssetNetLimit < 0 {
 		return nil, fmt.Errorf("create asset issue error: free asset net limit < 0")
 	}
-	contract.FreeAssetNetLimit = FreeAssetNetLimit
+	assetContract.FreeAssetNetLimit = FreeAssetNetLimit
 
 	if PublicFreeAssetNetLimit < 0 {
 		return nil, fmt.Errorf("create asset issue error: public free asset net limit < 0")
 	}
-	contract.PublicFreeAssetNetLimit = PublicFreeAssetNetLimit
+	assetContract.PublicFreeAssetNetLimit = PublicFreeAssetNetLimit
 
-	contract.VoteScore = voteScore
-	contract.Description = []byte(description)
-	contract.Url = []byte(urlStr)
+	assetContract.VoteScore = voteScore
+	assetContract.Description = []byte(description)
+	assetContract.Url = []byte(urlStr)
 
 	for key, value := range frozenSupply {
 		amount, err := strconv.ParseInt(value, 10, 64)
@@ -126,19 +127,19 @@ func (g *GrpcClient) AssetIssue(from, name, description, abbr, urlStr string,
 		if err != nil {
 			return nil, fmt.Errorf("create asset issue error: convert error: %v", err)
 		}
-		assetIssueContractFrozenSupply := new(core.
-			AssetIssueContract_FrozenSupply)
+
+		assetIssueContractFrozenSupply := &contract.AssetIssueContract_FrozenSupply{}
 		assetIssueContractFrozenSupply.FrozenAmount = amount
 		assetIssueContractFrozenSupply.FrozenDays = days
 		// add supply to contract
-		contract.FrozenSupply = append(contract.
+		assetContract.FrozenSupply = append(assetContract.
 			FrozenSupply, assetIssueContractFrozenSupply)
 	}
 
 	ctx, cancel := g.getContext()
 	defer cancel()
 
-	tx, err := g.Client.CreateAssetIssue2(ctx, contract)
+	tx, err := g.Client.CreateAssetIssue2(ctx, assetContract)
 	if err != nil {
 		return nil, err
 	}
@@ -156,7 +157,7 @@ func (g *GrpcClient) UpdateAssetIssue(from, description, urlStr string,
 	newLimit, newPublicLimit int64) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.UpdateAssetContract{}
+	contract := &contract.UpdateAssetContract{}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
 		return nil, err
 	}
@@ -186,7 +187,7 @@ func (g *GrpcClient) UpdateAssetIssue(from, description, urlStr string,
 func (g *GrpcClient) TransferAsset(from, toAddress,
 	assetName string, amount int64) (*api.TransactionExtention, error) {
 	var err error
-	contract := &core.TransferAssetContract{}
+	contract := &contract.TransferAssetContract{}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
 		return nil, err
 	}
@@ -217,7 +218,7 @@ func (g *GrpcClient) TransferAsset(from, toAddress,
 func (g *GrpcClient) ParticipateAssetIssue(from, issuerAddress,
 	tokenID string, amount int64) (*api.TransactionExtention, error) {
 	var err error
-	contract := &core.ParticipateAssetIssueContract{}
+	contract := &contract.ParticipateAssetIssueContract{}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
 		return nil, err
 	}
@@ -248,7 +249,7 @@ func (g *GrpcClient) ParticipateAssetIssue(from, issuerAddress,
 func (g *GrpcClient) UnfreezeAsset(from string) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.UnfreezeAssetContract{}
+	contract := &contract.UnfreezeAssetContract{}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
 		return nil, err
 	}

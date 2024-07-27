@@ -4,9 +4,10 @@ import (
 	"encoding/binary"
 	"fmt"
 
-	"github.com/fbsobreira/gotron-sdk/pkg/common"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/api"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
+	"github.com/tgpxdev/gotron-sdk/pkg/common"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/api"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core/contract"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -53,7 +54,7 @@ func (g *GrpcClient) ExchangeCreate(
 ) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.ExchangeCreateContract{
+	contract := &contract.ExchangeCreateContract{
 		FirstTokenId:       []byte(tokenID1),
 		FirstTokenBalance:  amountToken1,
 		SecondTokenId:      []byte(tokenID2),
@@ -88,7 +89,7 @@ func (g *GrpcClient) ExchangeInject(
 ) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.ExchangeInjectContract{
+	contract := &contract.ExchangeInjectContract{
 		ExchangeId: exchangeID,
 		TokenId:    []byte(tokenID),
 		Quant:      amountToken,
@@ -122,7 +123,7 @@ func (g *GrpcClient) ExchangeWithdraw(
 ) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.ExchangeWithdrawContract{
+	contract := &contract.ExchangeWithdrawContract{
 		ExchangeId: exchangeID,
 		TokenId:    []byte(tokenID),
 		Quant:      amountToken,
@@ -157,7 +158,7 @@ func (g *GrpcClient) ExchangeTrade(
 ) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.ExchangeTransactionContract{
+	contract := &contract.ExchangeTransactionContract{
 		ExchangeId: exchangeID,
 		TokenId:    []byte(tokenID),
 		Quant:      amountToken,

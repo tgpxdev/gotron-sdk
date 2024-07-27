@@ -3,9 +3,10 @@ package client
 import (
 	"fmt"
 
-	"github.com/fbsobreira/gotron-sdk/pkg/common"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/api"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
+	"github.com/tgpxdev/gotron-sdk/pkg/common"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/api"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core/contract"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -14,7 +15,7 @@ func (g *GrpcClient) FreezeBalance(from, delegateTo string,
 	resource core.ResourceCode, frozenBalance int64) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.FreezeBalanceContract{}
+	contract := &contract.FreezeBalanceContract{}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
 		return nil, err
 	}
@@ -51,7 +52,7 @@ func (g *GrpcClient) FreezeBalanceV2(from string,
 	resource core.ResourceCode, frozenBalance int64) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.FreezeBalanceV2Contract{}
+	contract := &contract.FreezeBalanceV2Contract{}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
 		return nil, err
 	}
@@ -79,7 +80,7 @@ func (g *GrpcClient) FreezeBalanceV2(from string,
 func (g *GrpcClient) UnfreezeBalance(from, delegateTo string, resource core.ResourceCode) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.UnfreezeBalanceContract{}
+	contract := &contract.UnfreezeBalanceContract{}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
 		return nil, err
 	}
@@ -112,7 +113,7 @@ func (g *GrpcClient) UnfreezeBalance(from, delegateTo string, resource core.Reso
 func (g *GrpcClient) UnfreezeBalanceV2(from string, resource core.ResourceCode, unfreezeBalance int64) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.UnfreezeBalanceV2Contract{}
+	contract := &contract.UnfreezeBalanceV2Contract{}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
 		return nil, err
 	}
@@ -181,7 +182,7 @@ func (g *GrpcClient) GetCanWithdrawUnfreezeAmount(from string, timestamp int64) 
 func (g *GrpcClient) WithdrawExpireUnfreeze(from string, timestamp int64) (*api.TransactionExtention, error) {
 	var err error
 
-	contract := &core.WithdrawExpireUnfreezeContract{}
+	contract := &contract.WithdrawExpireUnfreezeContract{}
 	if contract.OwnerAddress, err = common.DecodeCheck(from); err != nil {
 		return nil, err
 	}

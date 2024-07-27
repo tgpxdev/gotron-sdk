@@ -6,12 +6,13 @@ import (
 	"math/big"
 	"testing"
 
-	"github.com/fbsobreira/gotron-sdk/pkg/abi"
-	"github.com/fbsobreira/gotron-sdk/pkg/client"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/api"
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/tgpxdev/gotron-sdk/pkg/abi"
+	"github.com/tgpxdev/gotron-sdk/pkg/client"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/api"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core/contract"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
 )
@@ -24,7 +25,7 @@ func TestProtoParse(t *testing.T) {
 	proto.Unmarshal(mb, raw)
 	fmt.Printf("Raw: %+v\n", raw)
 	c := raw.GetContract()[0]
-	trig := &core.TriggerSmartContract{}
+	trig := &contract.TriggerSmartContract{}
 	// recover
 	err := c.GetParameter().UnmarshalTo(trig)
 	require.Nil(t, err)
@@ -39,11 +40,11 @@ func TestProtoParseR(t *testing.T) {
 	require.Nil(t, err)
 
 	for _, tx := range block.Transactions {
-		for _, contract := range tx.GetTransaction().GetRawData().GetContract() {
-			switch contract.Type {
+		for _, txc := range tx.GetTransaction().GetRawData().GetContract() {
+			switch txc.Type {
 			case core.Transaction_Contract_TriggerSmartContract:
-				tsc := core.TriggerSmartContract{}
-				err := contract.Parameter.UnmarshalTo(&tsc)
+				tsc := contract.TriggerSmartContract{}
+				err := txc.Parameter.UnmarshalTo(&tsc)
 				require.Nil(t, err)
 				fmt.Println("Its ok.... test contract data")
 			default:

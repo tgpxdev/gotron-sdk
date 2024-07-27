@@ -3,7 +3,7 @@ package contract
 import (
 	"encoding/json"
 
-	"github.com/fbsobreira/gotron-sdk/pkg/proto/core"
+	"github.com/tgpxdev/gotron-sdk/pkg/proto/core/contract"
 )
 
 // JSONABI data format
@@ -26,62 +26,62 @@ type JSONABI struct {
 	Type            string `json:"type"`
 }
 
-func getState(str string) core.SmartContract_ABI_Entry_StateMutabilityType {
+func getState(str string) contract.SmartContract_ABI_Entry_StateMutabilityType {
 	switch str {
 	case "pure":
-		return core.SmartContract_ABI_Entry_Pure
+		return contract.SmartContract_ABI_Entry_Pure
 	case "view":
-		return core.SmartContract_ABI_Entry_View
+		return contract.SmartContract_ABI_Entry_View
 	case "nonpayable":
-		return core.SmartContract_ABI_Entry_Nonpayable
+		return contract.SmartContract_ABI_Entry_Nonpayable
 	case "payable":
-		return core.SmartContract_ABI_Entry_Payable
+		return contract.SmartContract_ABI_Entry_Payable
 	default:
-		return core.SmartContract_ABI_Entry_UnknownMutabilityType
+		return contract.SmartContract_ABI_Entry_UnknownMutabilityType
 	}
 }
-func getType(str string) core.SmartContract_ABI_Entry_EntryType {
+func getType(str string) contract.SmartContract_ABI_Entry_EntryType {
 	switch str {
 	case "constructor":
-		return core.SmartContract_ABI_Entry_Constructor
+		return contract.SmartContract_ABI_Entry_Constructor
 	case "function":
-		return core.SmartContract_ABI_Entry_Function
+		return contract.SmartContract_ABI_Entry_Function
 	case "event":
-		return core.SmartContract_ABI_Entry_Event
+		return contract.SmartContract_ABI_Entry_Event
 	case "fallback":
-		return core.SmartContract_ABI_Entry_Fallback
+		return contract.SmartContract_ABI_Entry_Fallback
 	default:
-		return core.SmartContract_ABI_Entry_UnknownEntryType
+		return contract.SmartContract_ABI_Entry_UnknownEntryType
 	}
 }
 
 // JSONtoABI converts json string to ABI entry
-func JSONtoABI(jsonSTR string) (*core.SmartContract_ABI, error) {
+func JSONtoABI(jsonSTR string) (*contract.SmartContract_ABI, error) {
 	jABI := []JSONABI{}
 	if err := json.Unmarshal([]byte(jsonSTR), &jABI); err != nil {
 		return nil, err
 	}
-	ABI := &core.SmartContract_ABI{}
+	ABI := &contract.SmartContract_ABI{}
 
 	for _, v := range jABI {
-		inputs := []*core.SmartContract_ABI_Entry_Param{}
+		inputs := []*contract.SmartContract_ABI_Entry_Param{}
 		for _, input := range v.Inputs {
-			inputs = append(inputs, &core.SmartContract_ABI_Entry_Param{
+			inputs = append(inputs, &contract.SmartContract_ABI_Entry_Param{
 				Indexed: input.Indexed,
 				Name:    input.Name,
 				Type:    input.Type,
 			})
 		}
-		outputs := []*core.SmartContract_ABI_Entry_Param{}
+		outputs := []*contract.SmartContract_ABI_Entry_Param{}
 		for _, output := range v.Outputs {
-			outputs = append(outputs, &core.SmartContract_ABI_Entry_Param{
+			outputs = append(outputs, &contract.SmartContract_ABI_Entry_Param{
 				Indexed: output.Indexed,
 				Name:    output.Name,
 				Type:    output.Type,
 			})
 		}
 		ABI.Entrys = append(ABI.Entrys,
-			&core.SmartContract_ABI_Entry{
+			&contract.SmartContract_ABI_Entry{
 				Anonymous:       v.Anonymous,
 				Constant:        v.Constant,
 				Name:            v.Name,

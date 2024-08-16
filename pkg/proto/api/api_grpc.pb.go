@@ -164,6 +164,9 @@ const (
 	Wallet_GetTransactionListFromPending_FullMethodName                = "/protocol.Wallet/GetTransactionListFromPending"
 	Wallet_GetPendingSize_FullMethodName                               = "/protocol.Wallet/GetPendingSize"
 	Wallet_GetBlock_FullMethodName                                     = "/protocol.Wallet/GetBlock"
+	Wallet_GetBandwidthPrices_FullMethodName                           = "/protocol.Wallet/GetBandwidthPrices"
+	Wallet_GetEnergyPrices_FullMethodName                              = "/protocol.Wallet/GetEnergyPrices"
+	Wallet_GetMemoFee_FullMethodName                                   = "/protocol.Wallet/GetMemoFee"
 )
 
 // WalletClient is the client API for Wallet service.
@@ -355,6 +358,9 @@ type WalletClient interface {
 	GetTransactionListFromPending(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*TransactionIdList, error)
 	GetPendingSize(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*NumberMessage, error)
 	GetBlock(ctx context.Context, in *BlockReq, opts ...grpc.CallOption) (*BlockExtention, error)
+	GetBandwidthPrices(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*PricesResponseMessage, error)
+	GetEnergyPrices(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*PricesResponseMessage, error)
+	GetMemoFee(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*PricesResponseMessage, error)
 }
 
 type walletClient struct {
@@ -1795,6 +1801,36 @@ func (c *walletClient) GetBlock(ctx context.Context, in *BlockReq, opts ...grpc.
 	return out, nil
 }
 
+func (c *walletClient) GetBandwidthPrices(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*PricesResponseMessage, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PricesResponseMessage)
+	err := c.cc.Invoke(ctx, Wallet_GetBandwidthPrices_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *walletClient) GetEnergyPrices(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*PricesResponseMessage, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PricesResponseMessage)
+	err := c.cc.Invoke(ctx, Wallet_GetEnergyPrices_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *walletClient) GetMemoFee(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*PricesResponseMessage, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PricesResponseMessage)
+	err := c.cc.Invoke(ctx, Wallet_GetMemoFee_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WalletServer is the server API for Wallet service.
 // All implementations must embed UnimplementedWalletServer
 // for forward compatibility
@@ -1984,6 +2020,9 @@ type WalletServer interface {
 	GetTransactionListFromPending(context.Context, *EmptyMessage) (*TransactionIdList, error)
 	GetPendingSize(context.Context, *EmptyMessage) (*NumberMessage, error)
 	GetBlock(context.Context, *BlockReq) (*BlockExtention, error)
+	GetBandwidthPrices(context.Context, *EmptyMessage) (*PricesResponseMessage, error)
+	GetEnergyPrices(context.Context, *EmptyMessage) (*PricesResponseMessage, error)
+	GetMemoFee(context.Context, *EmptyMessage) (*PricesResponseMessage, error)
 	mustEmbedUnimplementedWalletServer()
 }
 
@@ -2419,6 +2458,15 @@ func (UnimplementedWalletServer) GetPendingSize(context.Context, *EmptyMessage) 
 }
 func (UnimplementedWalletServer) GetBlock(context.Context, *BlockReq) (*BlockExtention, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBlock not implemented")
+}
+func (UnimplementedWalletServer) GetBandwidthPrices(context.Context, *EmptyMessage) (*PricesResponseMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBandwidthPrices not implemented")
+}
+func (UnimplementedWalletServer) GetEnergyPrices(context.Context, *EmptyMessage) (*PricesResponseMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEnergyPrices not implemented")
+}
+func (UnimplementedWalletServer) GetMemoFee(context.Context, *EmptyMessage) (*PricesResponseMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetMemoFee not implemented")
 }
 func (UnimplementedWalletServer) mustEmbedUnimplementedWalletServer() {}
 
@@ -5007,6 +5055,60 @@ func _Wallet_GetBlock_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Wallet_GetBandwidthPrices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).GetBandwidthPrices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_GetBandwidthPrices_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).GetBandwidthPrices(ctx, req.(*EmptyMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Wallet_GetEnergyPrices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).GetEnergyPrices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_GetEnergyPrices_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).GetEnergyPrices(ctx, req.(*EmptyMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Wallet_GetMemoFee_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletServer).GetMemoFee(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Wallet_GetMemoFee_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletServer).GetMemoFee(ctx, req.(*EmptyMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Wallet_ServiceDesc is the grpc.ServiceDesc for Wallet service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -5586,6 +5688,18 @@ var Wallet_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetBlock",
 			Handler:    _Wallet_GetBlock_Handler,
 		},
+		{
+			MethodName: "GetBandwidthPrices",
+			Handler:    _Wallet_GetBandwidthPrices_Handler,
+		},
+		{
+			MethodName: "GetEnergyPrices",
+			Handler:    _Wallet_GetEnergyPrices_Handler,
+		},
+		{
+			MethodName: "GetMemoFee",
+			Handler:    _Wallet_GetMemoFee_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "api/api.proto",
@@ -5636,6 +5750,8 @@ const (
 	WalletSolidity_GetMarketPairList_FullMethodName                  = "/protocol.WalletSolidity/GetMarketPairList"
 	WalletSolidity_GetBurnTrx_FullMethodName                         = "/protocol.WalletSolidity/GetBurnTrx"
 	WalletSolidity_GetBlock_FullMethodName                           = "/protocol.WalletSolidity/GetBlock"
+	WalletSolidity_GetBandwidthPrices_FullMethodName                 = "/protocol.WalletSolidity/GetBandwidthPrices"
+	WalletSolidity_GetEnergyPrices_FullMethodName                    = "/protocol.WalletSolidity/GetEnergyPrices"
 )
 
 // WalletSolidityClient is the client API for WalletSolidity service.
@@ -5690,6 +5806,8 @@ type WalletSolidityClient interface {
 	GetMarketPairList(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*core.MarketOrderPairList, error)
 	GetBurnTrx(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*NumberMessage, error)
 	GetBlock(ctx context.Context, in *BlockReq, opts ...grpc.CallOption) (*BlockExtention, error)
+	GetBandwidthPrices(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*PricesResponseMessage, error)
+	GetEnergyPrices(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*PricesResponseMessage, error)
 }
 
 type walletSolidityClient struct {
@@ -6140,6 +6258,26 @@ func (c *walletSolidityClient) GetBlock(ctx context.Context, in *BlockReq, opts 
 	return out, nil
 }
 
+func (c *walletSolidityClient) GetBandwidthPrices(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*PricesResponseMessage, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PricesResponseMessage)
+	err := c.cc.Invoke(ctx, WalletSolidity_GetBandwidthPrices_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *walletSolidityClient) GetEnergyPrices(ctx context.Context, in *EmptyMessage, opts ...grpc.CallOption) (*PricesResponseMessage, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PricesResponseMessage)
+	err := c.cc.Invoke(ctx, WalletSolidity_GetEnergyPrices_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // WalletSolidityServer is the server API for WalletSolidity service.
 // All implementations must embed UnimplementedWalletSolidityServer
 // for forward compatibility
@@ -6192,6 +6330,8 @@ type WalletSolidityServer interface {
 	GetMarketPairList(context.Context, *EmptyMessage) (*core.MarketOrderPairList, error)
 	GetBurnTrx(context.Context, *EmptyMessage) (*NumberMessage, error)
 	GetBlock(context.Context, *BlockReq) (*BlockExtention, error)
+	GetBandwidthPrices(context.Context, *EmptyMessage) (*PricesResponseMessage, error)
+	GetEnergyPrices(context.Context, *EmptyMessage) (*PricesResponseMessage, error)
 	mustEmbedUnimplementedWalletSolidityServer()
 }
 
@@ -6330,6 +6470,12 @@ func (UnimplementedWalletSolidityServer) GetBurnTrx(context.Context, *EmptyMessa
 }
 func (UnimplementedWalletSolidityServer) GetBlock(context.Context, *BlockReq) (*BlockExtention, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBlock not implemented")
+}
+func (UnimplementedWalletSolidityServer) GetBandwidthPrices(context.Context, *EmptyMessage) (*PricesResponseMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBandwidthPrices not implemented")
+}
+func (UnimplementedWalletSolidityServer) GetEnergyPrices(context.Context, *EmptyMessage) (*PricesResponseMessage, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEnergyPrices not implemented")
 }
 func (UnimplementedWalletSolidityServer) mustEmbedUnimplementedWalletSolidityServer() {}
 
@@ -7136,6 +7282,42 @@ func _WalletSolidity_GetBlock_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WalletSolidity_GetBandwidthPrices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletSolidityServer).GetBandwidthPrices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WalletSolidity_GetBandwidthPrices_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletSolidityServer).GetBandwidthPrices(ctx, req.(*EmptyMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WalletSolidity_GetEnergyPrices_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EmptyMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WalletSolidityServer).GetEnergyPrices(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WalletSolidity_GetEnergyPrices_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WalletSolidityServer).GetEnergyPrices(ctx, req.(*EmptyMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // WalletSolidity_ServiceDesc is the grpc.ServiceDesc for WalletSolidity service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -7318,6 +7500,14 @@ var WalletSolidity_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBlock",
 			Handler:    _WalletSolidity_GetBlock_Handler,
+		},
+		{
+			MethodName: "GetBandwidthPrices",
+			Handler:    _WalletSolidity_GetBandwidthPrices_Handler,
+		},
+		{
+			MethodName: "GetEnergyPrices",
+			Handler:    _WalletSolidity_GetEnergyPrices_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

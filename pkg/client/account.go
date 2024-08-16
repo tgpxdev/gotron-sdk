@@ -38,6 +38,14 @@ func (g *GrpcClient) GetAccount(addr string) (*core.Account, error) {
 	return acc, nil
 }
 
+func (g *GrpcClient) GetAccountBalance(addr string) (int64, error) {
+	account, err := g.GetAccount(addr)
+	if err != nil {
+		return 0, err
+	}
+	return account.GetBalance(), nil
+}
+
 // GetRewardsInfo from BASE58 address
 func (g *GrpcClient) GetRewardsInfo(addr string) (int64, error) {
 	addrBytes, err := common.DecodeCheck(addr)

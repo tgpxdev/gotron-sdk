@@ -179,9 +179,7 @@ func (g *GrpcClient) TRC20Send(from, to, contract string, amount *big.Int, feeLi
 	return g.TRC20Call(from, contract, req, false, feeLimit)
 }
 
-/*
-parameter:owner is who will sign the tx
-*/
+// TRC20TransferFrom parameter:owner is who will sign the tx
 func (g *GrpcClient) TRC20TransferFrom(owner, from, to, contract string, amount *big.Int, feeLimit int64) (*api.TransactionExtention, error) {
 	addrA, err := address.Base58ToAddress(from)
 	if err != nil {
@@ -192,7 +190,8 @@ func (g *GrpcClient) TRC20TransferFrom(owner, from, to, contract string, amount 
 		return nil, err
 	}
 	ab := common.LeftPadBytes(amount.Bytes(), 32)
-	req := "0x23b872dd" +
+	//// 0x23b872dd is the erc20-transferFrom MethodSignature
+	req := trc20TransferFromMethodSignature +
 		"0000000000000000000000000000000000000000000000000000000000000000"[len(addrA.Hex())-4:] + addrA.Hex()[4:] +
 		"0000000000000000000000000000000000000000000000000000000000000000"[len(addrB.Hex())-4:] + addrB.Hex()[4:]
 	req += common.Bytes2Hex(ab)

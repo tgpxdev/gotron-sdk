@@ -34,13 +34,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
 	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/pborman/uuid"
+	"github.com/google/uuid"
 	"github.com/tgpxdev/gotron-sdk/pkg/address"
 	"golang.org/x/crypto/pbkdf2"
 	"golang.org/x/crypto/scrypt"
@@ -81,7 +80,7 @@ type keyStorePassphrase struct {
 
 func (ks keyStorePassphrase) GetKey(addr address.Address, filename, auth string) (*Key, error) {
 	// Load the key from the keystore and decrypt its contents
-	keyjson, err := ioutil.ReadFile(filename)
+	keyjson, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
@@ -275,7 +274,11 @@ func decryptKeyV3(keyProtected *encryptedKeyJSONV3, auth string) (keyBytes []byt
 	if keyProtected.Version != version {
 		return nil, nil, fmt.Errorf("Version not supported: %v", keyProtected.Version)
 	}
-	keyID = uuid.Parse(keyProtected.ID)
+	uid, err := uuid.Parse(keyProtected.ID)
+	if err != nil {
+		return nil, nil, err
+	}
+	keyID = uid[:]
 	plainText, err := DecryptDataV3(keyProtected.Crypto, auth)
 	if err != nil {
 		return nil, nil, err
@@ -284,7 +287,12 @@ func decryptKeyV3(keyProtected *encryptedKeyJSONV3, auth string) (keyBytes []byt
 }
 
 func decryptKeyV1(keyProtected *encryptedKeyJSONV1, auth string) (keyBytes []byte, keyID []byte, err error) {
-	keyID = uuid.Parse(keyProtected.ID)
+	uid, err := uuid.Parse(keyProtected.ID)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	keyID = uid[:]
 	mac, err := hex.DecodeString(keyProtected.Crypto.MAC)
 	if err != nil {
 		return nil, nil, err

@@ -30,7 +30,7 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/pborman/uuid"
+	"github.com/google/uuid"
 	"github.com/tgpxdev/gotron-sdk/pkg/address"
 )
 
@@ -112,9 +112,10 @@ func (k *Key) UnmarshalJSON(j []byte) (err error) {
 		return err
 	}
 
-	u := new(uuid.UUID)
-	*u = uuid.Parse(keyJSON.ID)
-	k.ID = *u
+	k.ID, err = uuid.Parse(keyJSON.ID)
+	if err != nil {
+		return err
+	}
 	addr, err := hex.DecodeString(keyJSON.Address)
 	if err != nil {
 		return err
@@ -131,7 +132,7 @@ func (k *Key) UnmarshalJSON(j []byte) (err error) {
 }
 
 func newKeyFromECDSA(privateKeyECDSA *ecdsa.PrivateKey) *Key {
-	id := uuid.NewRandom()
+	id := uuid.New()
 	key := &Key{
 		ID:         id,
 		Address:    address.PubkeyToAddress(privateKeyECDSA.PublicKey),

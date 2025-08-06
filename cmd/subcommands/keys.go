@@ -12,6 +12,7 @@ import (
 	"github.com/tgpxdev/gotron-sdk/pkg/address"
 	"github.com/tgpxdev/gotron-sdk/pkg/common"
 	c "github.com/tgpxdev/gotron-sdk/pkg/common"
+	"github.com/tgpxdev/gotron-sdk/pkg/keys"
 	"golang.org/x/crypto/ssh/terminal"
 
 	"github.com/spf13/cobra"
@@ -235,11 +236,11 @@ func keysSub() []*cobra.Command {
 		Short: "export a random private key",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			key, err := bip39.NewEntropy(256)
+			privateKey, err := keys.GenerateKey()
 			if err != nil {
 				return err
 			}
-			fmt.Println(hex.EncodeToString(key))
+			fmt.Println(hex.EncodeToString(privateKey.Serialize()))
 			return nil
 		},
 	}

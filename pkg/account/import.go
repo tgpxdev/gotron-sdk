@@ -1,7 +1,6 @@
 package account
 
 import (
-	"encoding/hex"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -11,9 +10,9 @@ import (
 
 	"github.com/mitchellh/go-homedir"
 
-	"github.com/btcsuite/btcd/btcec/v2"
 	mapset "github.com/deckarep/golang-set"
 	"github.com/tgpxdev/gotron-sdk/pkg/common"
+	"github.com/tgpxdev/gotron-sdk/pkg/keys"
 	"github.com/tgpxdev/gotron-sdk/pkg/keystore"
 	"github.com/tgpxdev/gotron-sdk/pkg/mnemonic"
 	"github.com/tgpxdev/gotron-sdk/pkg/store"
@@ -32,16 +31,12 @@ func ImportFromPrivateKey(privateKey, name, passphrase string) (string, error) {
 		return "", fmt.Errorf("account %s already exists", name)
 	}
 
-	privateKeyBytes, err := hex.DecodeString(privateKey)
+	// private key from bytes
+	sk, err := keys.GetPrivateKeyFromHex(privateKey)
 	if err != nil {
 		return "", err
 	}
-	if len(privateKeyBytes) != common.Secp256k1PrivateKeyBytesLength {
-		return "", common.ErrBadKeyLength
-	}
 
-	// btcec.PrivKeyFromBytes only returns a secret key and public key
-	sk, _ := btcec.PrivKeyFromBytes(privateKeyBytes)
 	ks := store.FromAccountName(name)
 	_, err = ks.ImportECDSA(sk.ToECDSA(), passphrase)
 	return name, err
